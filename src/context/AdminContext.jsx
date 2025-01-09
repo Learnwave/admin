@@ -7,47 +7,21 @@ const AdminContextProvider = (props) => {
 
     const [aToken,setAtoken] = useState(localStorage.getItem('aToken') ? localStorage.getItem('aToken') : "");
     const backendUrl = import.meta.env.VITE_BACKEND_URL
-
-    const [doctors , setDoctors] = useState([])
-
-    const getAllDoctors = async () => {
-            try {
-                const {data} = await axios.post(backendUrl + '/api/admin/all-doctors',{} , {headers : {aToken}})
-                
-                
-                if (data.success) {
-                    setDoctors(data.doctors)
-                  
-                }else{
-                    toast.error(data.message)
-                   
-                }
+   
+    const getNewRequest = async () => {
+        try {
+                const data = await axios.post(backendUrl + "/api/admin/new-requests",{} ,{headers :  {aToken} })
+                console.log(data)
             } catch (error) {
-                toast.error(error.message);
-                
-                
-            }
+                console.error(error)}
     }
 
-    const changeAvailability = async (docId) => {
-            try {
-                
-                const {data} = await axios.post(backendUrl + '/api/admin/change-availabilty',{docId},{headers:{aToken}});
-                if (data.success) {
-                    toast.success(data.message)
-                    getAllDoctors()
-                }else{
-                    toast.error(data.message)
-                }
+    getNewRequest()
 
-            } catch (error) {
-                toast.error(error.message);
-                
-            }
-    }
+
     
     const value = {
-            aToken,setAtoken,backendUrl,getAllDoctors,doctors,changeAvailability
+            aToken,setAtoken,backendUrl,getNewRequest
     }
 
     return  (
