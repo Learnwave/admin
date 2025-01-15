@@ -7,8 +7,10 @@ export const AdminContext = createContext()
 const AdminContextProvider = (props) => {
 
     const [aToken,setAtoken] = useState(localStorage.getItem('aToken') ? localStorage.getItem('aToken') : "");
-    const [newStore,setNewStore] = useState(null)
-    console.log(newStore)
+    const [newStore,setNewStore] = useState([])
+    const [storeList,setStoreList] = useState([])
+
+    console.log(storeList)
     const backendUrl = import.meta.env.VITE_BACKEND_URL
    
     const getNewRequest = async () => {
@@ -24,14 +26,29 @@ const AdminContextProvider = (props) => {
                 console.error(error)}
     }
 
+    const getAllStore = async () => {
+        try {
+            const allStoreData = await axios.post(backendUrl + "/api/admin/get-all-store");
+            console.log(allStoreData)
+            if (allStoreData.data.success) {
+                setStoreList(allStoreData.data.allStore)
+               
+            }
+                
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     useEffect(()=>{
         getNewRequest()
+        getAllStore()
     },[])
 
 
     
     const value = {
-            aToken,setAtoken,backendUrl,getNewRequest,newStore
+            aToken,setAtoken,backendUrl,getNewRequest,newStore,storeList
     }
 
     return  (

@@ -3,13 +3,34 @@ import { useContext } from 'react'
 import { AdminContext } from '../context/AdminContext'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import axios from 'axios'
+
+
 
 const StoreCompo = () => {
-    const {newStore,getNewRequest} = useContext(AdminContext)
+    const {newStore,getNewRequest,backendUrl} = useContext(AdminContext)
+
     const [images,setImages] = useState("");
+   
+    const sendRes = async (e,userId,storeId) => {
+            console.log(e,userId,storeId)
+         try {
+            const data = await axios.post(backendUrl + "/api/admin/responce",{e,userId,storeId})
+            
+            if (data.success) {
+                console.log("api working")
+            }
+        } catch (error) {
+            console.error(error)
+        }    
+
+    }
+
     console.log(images)
     useEffect(()=>{
         getNewRequest()
+       
+
     },[])
   return newStore && (
     <div className='w-full flex flex-col gap-6 '>
@@ -19,7 +40,6 @@ const StoreCompo = () => {
                 <div key={index} className='w-full border shadow shadow-gray-400 border-black rounded-md flex lg:flex-row flex-col justify-between  p-4'>
                     
                     <div className='w-full lg:w-1/2 flex flex-col justify-between   gap-2'>
-
                         <div className='flex  gap-3'>
                          <p className='font-semibold px-2 '>Business name :</p>
                          <p> {item.name}</p>
@@ -95,26 +115,13 @@ const StoreCompo = () => {
                             <div className='flex flex-col gap-4'>
                                
                                 <div className='flex gap-4  flex-col' >
-                                    <div className='border bg-red-500 text-white border-black rounded-sm px-3 py-2'>
-
-                                    <select className=' bg-transparent outline-none  ' name="" id="">
-                                    <option value="Missing Information">Missing Information</option>
-                                    <option value="Unable To Connect With You">Unable To Connect With You</option>
-                                    <option value="Not Verify Your Business">Not Verify Your Business</option>
-                                     </select>
-                                    </div>
-                                      <button className='px-3 py-2 border border-black hover:bg-red-100'>Rejected</button>
-                                </div>
-                                <div className='flex gap-4  flex-col' >
-                                    <div className='border bg-green-500 text-white border-black rounded-sm px-3 py-2'>
-
-                                    <select className=' bg-transparent outline-none  ' name="" id="">
-                                    <option value="Missing Information">Accepted with Normal Profile</option>
-                                    <option value="Unable To Connect With You">Accepted With Verify Profile</option>
                                    
-                                     </select>
-                                    </div>
-                                      <button className='px-3 py-2 border border-black hover:bg-green-100'>Accepted</button>
+                                      <button onClick={(e)=>{sendRes(e.target.value,item.owner,item._id)}}  value="rejected" className='px-3 py-2 border bg-red-600 text-white'>Rejected</button>
+                                </div>
+                            
+                                <div className='flex gap-4  flex-col' >
+                                   
+                                      <button onClick={(e)=>{sendRes(e.target.value,item.owner,item._id)}} value="accepted" className='px-10 py-2 border bg-green-600 text-white'>Accepted</button>
                                 </div>
 
                                 
